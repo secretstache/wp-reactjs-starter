@@ -10,3 +10,5 @@ services:
     wordpress:
         ports:
             - "80:80"
+        volumes:
+            - ../../:/var/www/html/wp-content/plugins/wp-reactjs-starter

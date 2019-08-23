@@ -11,7 +11,7 @@
 
 **Client-side features:** _Familiar React API & patterns (ES6) with TypeScript_
 
--   [**ReactJS**](https://reactjs.org/) v16 with **Babel v7** `env` preset
+-   [**ReactJS**](https://reactjs.org/) v16 with **Babel v7** `env` preset + hooks
 -   [**mobx-state-tree**](https://github.com/mobxjs/mobx-state-tree) for Model Driven State Management
 -   [**webpack**](https://webpack.js.org/) v4 build for assets
 -   CSS and TypeScript [**Sourcemap**](https://www.html5rocks.com/en/tutorials/developertools/sourcemaps/) generation for debugging purposes

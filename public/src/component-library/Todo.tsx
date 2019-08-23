@@ -1,4 +1,4 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { Button, EButtonType } from "../wp/";
 import { ITodo as ITodoType, ITodoStore as ITodoStoreType } from "../store";
@@ -8,24 +8,27 @@ interface ITodoItemProps {
     todo: ITodoType;
 }
 
-@observer
-class TodoItem extends React.Component<ITodoItemProps> {
-    public render() {
-        const { todo } = this.props;
-        return (
-            <li>
-                <label>
-                    <input type="checkbox" />
-                    {todo.text}
-                </label>
-                &nbsp;
-                <a href="#" onClick={() => todo.remove()}>
-                    {__("Remove")}
-                </a>
-            </li>
-        );
-    }
-}
+/**
+ * Hooks example with useState. Currently MobX is still in use without useContext() and with inject().
+ * That (useContext) is the usual way when going with only-hooks components. You have to rewrite this yourself
+ * when you have decided what you take: Class components or hook components.
+ * If you decide for hook components see https://mobx-react.js.org/recipes-context
+ */
+const TodoItem = observer(({ todo }: { todo: ITodoType }) => {
+    const [isBold, setBold] = useState(false);
+    return (
+        <li onMouseEnter={() => setBold(true)} onMouseLeave={() => setBold(false)}>
+            <label style={{ fontWeight: isBold ? "bold" : "normal" }}>
+                <input type="checkbox" />
+                {todo.text}
+            </label>
+            &nbsp;
+            <a href="#" onClick={() => todo.remove()}>
+                {__("Remove")}
+            </a>
+        </li>
+    );
+});
 
 interface ITodoProps {
     store?: ITodoStoreType;

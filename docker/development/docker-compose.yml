@@ -1,4 +1,4 @@
-# This file defines all needed services for the local development environment without any host-specific options like "ports" .
+# This file defines all needed services for the local development environment without any host-specific options like "ports" or "volumes".
 #
 # docker-compose.e2e.yml:
 #   This file gets used when running E2E tests in CI in GitLab, it also should not export any "ports".
@@ -43,8 +43,8 @@ services:
         networks:
             - locl
         volumes:
+            # Do not include the plugin volume itself because it must be loaded via `docker cp` to avoid build and git clean issues
             - www:/var/www/html
-            - ../../:/var/www/html/wp-content/plugins/wp-reactjs-starter
             - ../scripts:/scripts
         restart: on-failure
         depends_on:
