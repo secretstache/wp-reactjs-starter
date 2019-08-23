@@ -23,6 +23,13 @@ class Assets extends base\Assets {
         $dpSuffix = $isDebug ? 'development' : 'production.min';
         $minSuffix = $isDebug ? '' : '.min';
 
+        // React (first check version is minium 16.8 so hooks work correctly)
+        $coreReact = wp_scripts()->query('react');
+        if ($coreReact !== false && version_compare($coreReact->ver, '16.8', '<')) {
+            wp_deregister_script('react');
+            wp_deregister_script('react-dom');
+        }
+
         // Both in admin interface (page) and frontend (widgets)
         $this->enqueueLibraryScript('react', 'react/umd/react.' . $dpSuffix . '.js');
         $this->enqueueLibraryScript('react-dom', 'react-dom/umd/react-dom.' . $dpSuffix . '.js', 'react');
