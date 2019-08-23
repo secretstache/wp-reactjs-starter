@@ -16,9 +16,9 @@ sleep 1; # Just to be sure the file is completely moved here
 test -f "wp" && mv /var/www/html/wp /usr/local/bin/
 . ~/.bashrc
 
-####################################################
-### --------- DO NOT CHANGE UNTIL HERE --------- ###
-####################################################
+# Wait for the installable plugin because it can be lazy (e. g. through e2e or traefik)
+echo "Wait for folder wp-reactjs-starter in $(pwd)/wp-content/plugins ..."
+while [ ! -d "wp-content/plugins/wp-reactjs-starter" ]; do sleep 1; done;
 
 # Run the following scripts only when WordPress is started at first time
 # Use always --allow-root because docker runs the service as root user
@@ -34,6 +34,10 @@ if ! $(wp --allow-root core is-installed); then
 
     # Permalink structure
     wp --allow-root rewrite structure '/%year%/%monthnum%/%postname%/' --hard
+
+    ####################################################
+    ### --------- DO NOT CHANGE UNTIL HERE --------- ###
+    ####################################################
 
     # Activate this plugin
     wp --allow-root plugin activate wp-reactjs-starter
