@@ -18,7 +18,7 @@ echo
 echo "[NETWORKS]"
 docker network ls
 export CURRENT_NETWORKS="$(docker network list --format "{{.Name}}" | awk '$1~/'"$COMPOSE_PROJECT_NAME$COMPOSE_PROJECT_NAME_SUB-$CI_COMMIT_REF_SLUG"'/{print $1}')"
-test "$CURRENT_NETWORKS" && echo "Removing..." && docker volume remove -f $CURRENT_NETWORKS
+test "$CURRENT_NETWORKS" && echo "Removing..." && docker network remove $CURRENT_NETWORKS
 
 echo
 echo "Purged"
