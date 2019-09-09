@@ -8,8 +8,9 @@ import { _i, __ } from "../util/i18n";
 import "./style.scss";
 import { locationRestPluginGet, IRequestRoutePluginGet, IParamsRoutePluginGet, IResponseRoutePluginGet } from "../rest";
 
-// Craete default store
-const todoStore = TodoStore.create();
+// Create default store
+// @ts-ignore See https://git.io/fjiRW, https://git.io/fjiRl and https://git.io/JeU5v
+const todoStore = TodoStore.create({});
 
 // Do a test ajax call when clicking the REST API url
 async function doTestAjaxCall(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {

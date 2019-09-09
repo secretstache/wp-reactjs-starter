@@ -76,8 +76,13 @@ class Assets extends base\Assets {
             'version' => WPRJSS_VERSION
         ];
 
+        // We put custom variables to "others" because if you put for example
+        // a boolean to the first-level it is interpreted as "1" instead of true.
         if ($context === base\Assets::TYPE_ADMIN) {
             return array_merge($common, [
+                'others' => [
+                    // Put your custom variables here
+                ],
                 'restUrl' => $this->getAsciiUrl(rest\Service::getUrl(rest\Service::SERVICE_NAMESPACE)),
                 'restRoot' => $this->getAsciiUrl(get_rest_url()),
                 'restQuery' => ['_v' => WPRJSS_VERSION],
@@ -87,6 +92,9 @@ class Assets extends base\Assets {
         } else {
             return array_merge($common, [
                 /* Your frontend variables for the widget */
+                'others' => [
+                    // Put your custom variables here
+                ]
             ]);
         }
     }
