@@ -19,5 +19,6 @@
     "[php]": {
         "editor.formatOnSave": true
     },
+    "cSpell.enabled": false,
     "cSpell.ignoreWords": ["traefik"]
 }

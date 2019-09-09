@@ -1,4 +1,21 @@
-const pluginOptions = (window as any).wprjssOpts,
+/**
+ * See PHP file inc/general/Assets.class.php.
+ */
+interface IOpts {}
+
+interface ICommonOpts {
+    slug: string;
+    textDomain: string;
+    version: string;
+    restUrl?: string;
+    restRoot?: string;
+    restQuery?: {};
+    restNonce?: string;
+    publicUrl?: string;
+    others: IOpts;
+}
+
+const pluginOptions = (window as any).wprjssOpts as ICommonOpts,
     process = (window as any).process;
 
 const untrailingslashit = (str: string): string =>
