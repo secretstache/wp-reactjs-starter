@@ -407,14 +407,17 @@ When the above initial review got approved you can go on with deployment via CI/
 
 When commiting to a development branch (non-master) you can automatically setup a complete virtual server with the complete WordPress installation. This is a so-called "[Review application](https://docs.gitlab.com/ee/ci/review_apps/)". This boilerplate is preconfigured to create such dynamic environments on the same server as your GitLab CI Runner. Here a step-by-step guide how to activate review apps for your plugin together with the [Traefik](https://github.com/containous/traefik) router:
 
-1. **Note:** When talking in the next steps about to replace the server IP then put your IP of your GitLab CI Runner server and replace `.` with `-`, for example `192-168-1-250`. Also, if you add new Traefik frontend hosts consider to not use `.` because it will break Let`s Encrypt SSL certificates
+**SSL certificate:** Due to some productive usage of the boilerplate it is currently not possible to use `nip.io` together with Traefik. So I have adjusted the boilerplate to use HTTP requests instead of HTTPS.
+
+1. **Note:** When talking in the next steps about to replace the server IP then put your IP of your GitLab CI Runner server and replace `.` with `-`, for example `192-168-1-250`. -Also, if you add new Traefik frontend hosts consider to not use `.` because it will break Let`s Encrypt SSL certificates-
 1. SSH into your GitLab CI Runner (see above how to configure that runner)
 1. `sudo apt install apache2-utils`: This package is necessery for the next command
 1. `htpasswd -nb admin secure_password`: Create a password for the Traefik dashboard, replace `secure_password` with your password
 1. `cd /opt/ && sudo nano traefik.toml`: Create a Traefik configuration file, see `build/traefik.txt`. Copy that file and replace `your_generated_htpasswd` with the output of the previous command. Also replace `your_email` and `your-server-ip`
 1. `sudo docker network create traefik`: Create an unique network for Traefik which is used by all containers which should be available to the web
-1. `sudo touch acme.json && sudo chmod 600 acme.json`: This file simply should be empty, Traefik is storing SSL certificates here
-1. `sudo docker run -d -v /var/run/docker.sock:/var/run/docker.sock -v $PWD/traefik.toml:/traefik.toml -v $PWD/acme.json:/acme.json -p 80:80 -p 443:443 -l traefik.enable=true -l traefik.frontend.rule=Host:monitor-<your-server-ip>.nip.io -l traefik.port=8080 --network traefik --name traefik traefik:1.7.12-alpine`: Create the Traefik container which handles all the routing. Replace `<your-server-ip>`.
+1. -`sudo touch acme.json && sudo chmod 600 acme.json`: This file simply should be empty, Traefik is storing SSL certificates here-
+1. -`sudo docker run -d -v /var/run/docker.sock:/var/run/docker.sock -v $PWD/traefik.toml:/traefik.toml -v $PWD/acme.json:/acme.json -p 80:80 -p 443:443 -l traefik.enable=true -l traefik.frontend.rule=Host:monitor-<your-server-ip>.nip.io -l traefik.port=8080 --network traefik --name traefik traefik:1.7.12-alpine`: Create the Traefik container which handles all the routing. Replace `<your-server-ip>`.-
+1. `sudo docker run -d -v /var/run/docker.sock:/var/run/docker.sock -v $PWD/traefik.toml:/traefik.toml -p 80:80 -l traefik.enable=true -l traefik.frontend.rule=Host:monitor-<your-server-ip>.nip.io -l traefik.port=8080 --network traefik --name traefik traefik:1.7.12-alpine`: Create the Traefik container which handles all the routing. Replace `<your-server-ip>`.
 1. Visit `monitor-<your-server-ip>.nip.io`, enter the credentials your generated with `htpasswd` and user `admin` and you will see the Traefik dashboard
 1. **Securing review apps itself?** Yes, that's possible with [Basic Authentication](https://docs.traefik.io/v2.0/middlewares/basicauth/) within Traeffik and also necessery for this boilerplate
 1. Navigate in your repository to `Settings > CI / CD > Variables` and add the variable `CI_TRAEFIK_HOST` with value `<your-server-ip>.nip.io`. Also replace here `your-server-ip`
