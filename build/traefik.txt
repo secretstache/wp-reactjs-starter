@@ -13,6 +13,10 @@ defaultEntryPoints = ["http"]
         users = ["your_generated_htpasswd"]
   [entryPoints.http]
     address = ":80"
+  [entryPoints.https]
+    address = ":443"
+    [entryPoints.https.redirect]
+      entryPoint = "http"
 #      [entryPoints.http.redirect]
 #        entryPoint = "https"
 #  [entryPoints.https]
