@@ -52,6 +52,7 @@
 -   [**Docker**](https://www.docker.com/) for a local development environment
 -   Within the Docker environment you have [**WP-CLI**](https://developer.wordpress.org/cli/commands/) available
 -   [**Cypress**](https://www.cypress.io/) for End-To-End (E2E) tests
+-   [**semantic-release**](https://semantic-release.gitbook.io/semantic-release/) for semantic versioning and changelog generation
 
 ## :white_check_mark: Prerequesits
 
@@ -125,7 +126,7 @@ $ create-wp-react-app create my-plugin
 -   _`.babelrc`_: [Babel configuration](https://babeljs.io/docs/usage/babelrc/)
 -   _`.gitlab-ci.yml`_: [GitLab CI configuration](https://docs.gitlab.com/ee/ci/yaml/)
 -   _`.prettierrc`_: [Prettier configuration](https://prettier.io/docs/en/configuration.html)
--   _`CHANGELOG`_: Changelog file
+-   _`CHANGELOG.md`_: Changelog file, do not change it because this is automatically done by `semantic-release`
 -   _`commitlint.config.js`_: [Commitlint configuration](https://commitlint.js.org/#/)
 -   _`composer.json`_: [Composer package configuration](https://getcomposer.org/)
 -   _`Gruntfile.js`_: [Grunt automation file](https://gruntjs.com/sample-gruntfile)
@@ -153,7 +154,6 @@ $ create-wp-react-app create my-plugin
 | `yarn db-snapshot <file>`                                                                                                                                           | Docker, WP-CLI, DB   | Make a snapshot of the current defined database tables (see below how to configure) and safe to a file                                                                                                                                                                                                                       |
 | `yarn db-snapshot-import-on-startup`                                                                                                                                | Docker, WP-CLI, DB   | Make a snapshot of the current defined database tables (see below how to configure) and save them in that way, that the next WordPress install will import that snapshot                                                                                                                                                     |
 | `yarn db-snapshot-import`                                                                                                                                           | Docker, WP-CLI, DB   | The installation snapshot taken with `yarn db-snapshot-import-on-startup` is imported to the current running Docker instance. This can be useful for tests for example                                                                                                                                                       |
-| `yarn release`                                                                                                                                                      | Source files         | A wrapper for [`yarn version`](https://yarnpkg.com/lang/en/docs/cli/version/). You should avoid the original command and use always `yarn release`. For example you can run `yarn release --minor` to create a new minor version                                                                                             |
 | `yarn serve`                                                                                                                                                        | Source files         | Bundles all the plugin files together and puts it into the `dist` folder. This folder can be pushed to the wordpress.org SVN. See [Building production plugin](#building-production-plugin).                                                                                                                                 |
 | `yarn build`                                                                                                                                                        | `.tsx`               | Create production build of ReactJS files. The files gets generated in `public/dist`. This files should be loaded when `SCRIPT_DEBUG` is not active. Learn more here: [Building production plugin](#building-production-plugin)                                                                                               |
 | `yarn build-dev`                                                                                                                                                    | `.tsx`               | Create development build of ReactJS files. The files gets generated in `public/dev`. This files should be loaded when `SCRIPT_DEBUG` is active.                                                                                                                                                                              |
@@ -358,9 +358,11 @@ const NoticeExample = (
 
 ## Building production plugin
 
-Before publishing a new version you should run `yarn release`. It is a wrapper to [`yarn version`](https://yarnpkg.com/lang/en/docs/cli/version/) and you should always use that command instead the original one. The reason is that the boilerplate implementation also adjusts the `index.php` file. The release-command does not create a Git tag, you have to create it manually.
+**Never adjust your `package.json`/`index.php` `version` manually!**
 
-Afterwards simply run `yarn serve` and a folder `dist` gets created with a subfolder of the installable plugin and an installable zip file. It is recommenend to use CI / CD to publish the new version to wordpress.org or other marketplaces. An instroduction how to do this can be read below.
+Building a production plugin is completely covered by the GitLab CI. That means if you push changes to the `master` branch the pipeline automatically generates the installable `.zip` file. That file can be downloaded through [GitLab Releases](https://docs.gitlab.com/ee/user/project/releases/). The versioning is done via [`semantic-release`](https://semantic-release.gitbook.io/semantic-release/). You need to configure your GitLab CI to allow `push`, see also [here](https://semantic-release.gitbook.io/semantic-release/recipes/recipes/gitlab-ci).
+
+Simply run `yarn serve` and a folder `dist` gets created with a subfolder of the installable plugin and an installable zip file. It is recommenend to use CI / CD to publish the new version to wordpress.org or other marketplaces. An instroduction how to do this can be read below.
 
 ## Using CI CD
 
@@ -385,7 +387,7 @@ Also you have to use your own GitLab CI Runner (I think it works also with share
 In this section it is explained how to release a new plugin to wordpress.org. For example this plugin [wp-reactjs-starter](https://wordpress.org/plugins/wp-reactjs-starter) is built on top of this boilerplate. Generelly the initial release needs to be reviewed by the wordpress.org team so you have to prepare the installable plugin as zip file locally. Later - when upading the plugin - the GitLab CI is used.
 
 1. Add functionality to your plugin
-1. Adjust `CHANGELOG` and `README.wporg.txt` files (you can use a [README validator](https://wordpress.org/plugins/developers/readme-validator/))
+1. Adjust `CHANGELOG.md` and `README.wporg.txt` files (you can use a [README validator](https://wordpress.org/plugins/developers/readme-validator/))
 1. Prepare you images (header, icon, screenshots) in `assets` folder
 1. When you think it is ready to release, run `yarn serve`
 1. Navigate to `dist` and you will se a generated zip file

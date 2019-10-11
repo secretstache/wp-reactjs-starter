@@ -113,6 +113,9 @@ serve and docker e2e: # Create dist files of the plugin and run it through docke
     services:
         - docker:dind
     script:
+        # Adjust the semantic-release so it is also available in the new .zip file
+        - (BRANCH=$CI_COMMIT_REF_NAME yarn semantic-release || true) && echo 1
+        # Build the plugin
         - yarn serve
         # Make scripts executable
         - chmod +x docker/scripts/*
@@ -232,3 +235,19 @@ wordpress-dot-org:
             - master
         variables:
             - $WPORG_SVN_URL && $WPORG_SVN_USERNAME && $WPORG_SVN_PASSWORD
+
+release:
+    <<: *installsteps
+    stage: deploy
+    dependencies:
+        - serve and docker e2e
+        - docs
+    variables:
+        GIT_CLEAN_FLAGS: -ffdx
+    script:
+        - yarn semantic-release
+    only:
+        refs:
+            - master
+        variables:
+            - $CI_COMMIT_REF_NAME
