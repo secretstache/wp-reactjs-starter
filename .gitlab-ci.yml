@@ -20,7 +20,7 @@ variables:
     YARN_CACHE_FOLDER: ./.yarn
     # Additional settings
     DOCKER_DRIVER: overlay2
-    GIT_CLEAN_FLAGS: none # (CACHE WORKAROUND)
+    GIT_CLEAN_FLAGS: -ffdx -e .cypress/ -e .yarn/ -e node_modules/ -e vendor/ # (CACHE WORKAROUND)
 
 # Due to the usage of GIT_CLEAN_FLAGS the cache is no longer used because it is very slow.
 # There are some workarounds for caching for this CI pipeline.
