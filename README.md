@@ -360,7 +360,10 @@ const NoticeExample = (
 
 **Never adjust your `package.json`/`index.php` `version` manually!**
 
-Building a production plugin is completely covered by the GitLab CI. That means if you push changes to the `master` branch the pipeline automatically generates the installable `.zip` file. That file can be downloaded through [GitLab Releases](https://docs.gitlab.com/ee/user/project/releases/). The versioning is done via [`semantic-release`](https://semantic-release.gitbook.io/semantic-release/). You need to configure your GitLab CI to allow `push`, see also [here](https://semantic-release.gitbook.io/semantic-release/recipes/recipes/gitlab-ci).
+Building a production plugin is completely covered by the GitLab CI. That means if you push changes to the `master` branch the pipeline automatically generates the installable `.zip` file. That file can be downloaded through [GitLab Releases](https://docs.gitlab.com/ee/user/project/releases/). The versioning is done via [`semantic-release`](https://semantic-release.gitbook.io/semantic-release/).
+
+-   Configure your GitLab CI to allow `push`, see also [here](https://semantic-release.gitbook.io/semantic-release/recipes/recipes/gitlab-ci)
+-   Configure a Git commiter when pushing to a protected branch, see [here](https://semantic-release.gitbook.io/semantic-release/usage/configuration#git-environment-variables)
 
 Simply run `yarn serve` and a folder `dist` gets created with a subfolder of the installable plugin and an installable zip file. It is recommenend to use CI / CD to publish the new version to wordpress.org or other marketplaces. An instroduction how to do this can be read below.
 

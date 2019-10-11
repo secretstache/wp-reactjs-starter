@@ -114,7 +114,7 @@ serve and docker e2e: # Create dist files of the plugin and run it through docke
         - docker:dind
     script:
         # Adjust the semantic-release so it is also available in the new .zip file
-        - (BRANCH=$CI_COMMIT_REF_NAME yarn semantic-release || true) && echo 1
+        - (PREPARE_ONLY=1 BRANCH=$CI_COMMIT_REF_NAME yarn semantic-release || true) && echo 1
         # Build the plugin
         - yarn serve
         # Make scripts executable
