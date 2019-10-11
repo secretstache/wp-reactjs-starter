@@ -78,7 +78,7 @@ OR
 
 
 == Changelog ==
-[include:CHANGELOG]
+[include:CHANGELOG.md]
 
 == Upgrade Notice ==
 

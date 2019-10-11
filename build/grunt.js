@@ -33,7 +33,7 @@ module.exports = function(grunt) {
                     "inc/**/*",
                     "public/**/*",
                     "LICENSE",
-                    "CHANGELOG",
+                    "CHANGELOG.md",
                     // "README.md", The original readme is excluded because it is for GIT only
                     "README.wporg.txt",
                     "languages/**/*"

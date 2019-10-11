@@ -45,7 +45,7 @@ function urlBuilder({
     Object.keys(params)
         .filter((x) => foundParams.indexOf(x) === -1)
         .forEach((x) => {
-            getParams[x] = (params as any)[x];
+            getParams[x] = encodeURIComponent((params as any)[x]);
         });
 
     const usePath = trailingslashit(permalinkPath) + trailingslashit(location.namespace || "wprjss/v1") + path;
