@@ -38,8 +38,10 @@ module.exports = !prepareOnly
               [
                   "@semantic-release/gitlab",
                   {
-                      assets: [{ path: "dist/*-plugin.zip", label: "Installable plugin" }],
-                      assets: [{ path: "docs.zip", label: "Technical documentation" }]
+                      assets: [
+                          { path: "dist/*-plugin.zip", label: "Installable plugin" },
+                          { path: "docs.zip", label: "Technical documentation" }
+                      ]
                   }
               ]
           ]
