@@ -245,6 +245,7 @@ release:
     variables:
         GIT_CLEAN_FLAGS: -ffdx
     script:
+        - zip -r -q docs.zip docs/
         - yarn semantic-release
     only:
         refs:

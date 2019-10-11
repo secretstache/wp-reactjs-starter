@@ -29,12 +29,17 @@ module.exports = !prepareOnly
                       prepareCmd: execYarnVersion
                   }
               ],
-              "@semantic-release/git",
+              [
+                  "@semantic-release/git",
+                  {
+                      assets: ["CHANGELOG.md", "package.json", "index.php", "yarn.lock"]
+                  }
+              ],
               [
                   "@semantic-release/gitlab",
                   {
-                      assets: [{ path: "dist/*.zip", label: "Installable plugin" }],
-                      assets: [{ path: "docs", label: "Technical documentation" }]
+                      assets: [{ path: "dist/*-plugin.zip", label: "Installable plugin" }],
+                      assets: [{ path: "docs.zip", label: "Technical documentation" }]
                   }
               ]
           ]
