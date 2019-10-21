@@ -1,6 +1,6 @@
-var SERVE_DIR,
-    _ = require("lodash"),
-    exec = require("child_process").exec;
+const _ = require("lodash"),
+    exec = require("child_process").exec,
+    path = require("path");
 
 module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-cachebuster");
@@ -8,21 +8,20 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-copy");
     grunt.loadNpmTasks("grunt-contrib-clean");
     grunt.loadNpmTasks("grunt-contrib-compress");
-    grunt.file.defaultEncoding = "utf8";
+    grunt.loadNpmTasks("grunt-strip-code");
 
-    // Detect SERVE_DIR
-    SERVE_DIR = _.trimEnd(grunt.config.get("SERVE_DIR") || "dist", "/");
-    if ([".", "./", "/"].indexOf(SERVE_DIR) > -1) {
-        throw new Error("SERVE_DIR is not valid.");
-    }
+    grunt.file.defaultEncoding = "utf8";
 
     /**
      * Tasks configuration.
      */
     grunt.config.merge({
+        pkg: grunt.file.readJSON("package.json"),
+        DIST_DIR: "dist", // All distribution files
+        SERVE_DIR: "<%= DIST_DIR %>/<%= pkg.name %>", // Served plugin files
         clean: {
-            serve: SERVE_DIR + "/**/*",
-            serveAfter: [SERVE_DIR + "/public/src", SERVE_DIR + "/composer.*"]
+            distDir: "<%= DIST_DIR %>/**/*",
+            productionSource: ["<%= SERVE_DIR %>/public/src", "<%= SERVE_DIR %>/composer.*"]
         },
         copy: {
             serve: {
@@ -34,20 +33,19 @@ module.exports = function(grunt) {
                     "public/**/*",
                     "LICENSE",
                     "CHANGELOG.md",
-                    // "README.md", The original readme is excluded because it is for GIT only
                     "README.wporg.txt",
                     "languages/**/*"
                 ],
-                dest: SERVE_DIR
+                dest: "<%= SERVE_DIR %>"
             }
         },
         compress: {
-            serve: {
+            installablePlugin: {
                 options: {
-                    archive: "dist/<%= pkg.name %>-<%= pkg.version %>-plugin.zip"
+                    archive: "<%= DIST_DIR %>/<%= pkg.name %>-<%= pkg.version %>-plugin.zip"
                 },
                 expand: true,
-                cwd: "dist",
+                cwd: "<%= DIST_DIR %>",
                 src: "<%= pkg.name %>/**/*"
             }
         },
@@ -61,7 +59,7 @@ module.exports = function(grunt) {
                     format: "php"
                 },
                 src: (function() {
-                    var src = [];
+                    let src = [];
                     ["dist", "dev"].forEach(function(folder) {
                         src = src.concat(["public/" + folder + "/**/*.js", "public/" + folder + "/**/*.css"]);
                     });
@@ -85,23 +83,15 @@ module.exports = function(grunt) {
         }
     });
 
-    /**
-     * Cachebuster task
-     */
     grunt.registerTask("public-cachebuster", ["cachebuster:public", "node_modules_cachebuster:publiclib"]);
 
-    /**
-     * Copy npm libraries task.
-     */
     grunt.registerTask("copy-npmLibs", ["clean:npmLibs", "copy:npmLibs", "node_modules_cachebuster:publiclib"]);
 
-    /**
-     * Serve task.
-     */
-    grunt.registerTask("serveDo", function() {
-        var done = this.async();
-        grunt.log.writeln("Install no-dev composer dependencies... (SERVE_DIR=" + SERVE_DIR + ")");
-        exec("composer install --no-dev --no-scripts --prefer-dist --working-dir " + SERVE_DIR, function(
+    grunt.registerTask("productionComposerInstallation", function() {
+        const done = this.async(),
+            serveDir = grunt.config.get("SERVE_DIR");
+        grunt.log.writeln("Install no-dev composer dependencies... (SERVE_DIR=" + serveDir + ")");
+        exec("composer install --no-dev --no-scripts --prefer-dist --working-dir " + serveDir, function(
             error,
             stdout,
             stderr
@@ -110,16 +100,27 @@ module.exports = function(grunt) {
             done();
         });
     });
+
+    /**
+     * Serve the whole plugin to the distribution files.
+     */
     grunt.registerTask(
         "serve",
-        ["clean:serve", "copy:serve", "serveDo", "clean:serveAfter"].concat(grunt.config.get("SERVE_POST_TASKS") || [])
+        [
+            "clean:distDir",
+            "copy:serve",
+            "productionComposerInstallation",
+            "clean:productionLibs",
+            "strip_code:sourcemaps"
+        ].concat(grunt.config.get("SERVE_POST_TASKS") || [])
     );
 
     /**
-     * Versioning task.
+     * Versioning task that modifies the index.php file and reflects the same version
+     * as in package.json.
      */
     grunt.registerTask("postversion", function() {
-        var version = grunt.config.get("pkg.version"),
+        const version = grunt.config.get("pkg.version"),
             indexphp = grunt.file.read("index.php"),
             newindexphp = indexphp.replace(/Version:(\s*)(.*)$/gm, "Version:$1" + version);
         grunt.file.write("index.php", newindexphp);
@@ -130,12 +131,13 @@ module.exports = function(grunt) {
      * the [include:$FILE] syntax so wordpress.org can consume it.
      */
     grunt.registerTask("serveReadmeTxt", function() {
-        let publicTxt = grunt.file.read(SERVE_DIR + "/README.wporg.txt");
+        const serveDir = grunt.config.get("SERVE_DIR");
+        let publicTxt = grunt.file.read(serveDir + "/README.wporg.txt");
         publicTxt = publicTxt.replace(/\[include:([^\]]+)\]/g, (matched, index) =>
-            grunt.file.exists(SERVE_DIR + "/" + index) ? grunt.file.read(SERVE_DIR + "/" + index) : matched
+            grunt.file.exists(serveDir + "/" + index) ? grunt.file.read(serveDir + "/" + index) : matched
         );
-        grunt.file.write(SERVE_DIR + "/README.txt", publicTxt);
-        grunt.file.delete(SERVE_DIR + "/README.wporg.txt");
+        grunt.file.write(serveDir + "/README.txt", publicTxt);
+        grunt.file.delete(serveDir + "/README.wporg.txt");
     });
 
     /**
@@ -145,7 +147,8 @@ module.exports = function(grunt) {
      * @legacy
      */
     grunt.registerTask("serveRenameReadme", function() {
-        grunt.file.copy(SERVE_DIR + "/README.md", SERVE_DIR + "/README.txt");
-        grunt.file.delete(SERVE_DIR + "/README.md");
+        const serveDir = grunt.config.get("SERVE_DIR");
+        grunt.file.copy(serveDir + "/README.md", serveDir + "/README.txt");
+        grunt.file.delete(serveDir + "/README.md");
     });
 };

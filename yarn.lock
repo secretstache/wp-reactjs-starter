@@ -2570,6 +2570,11 @@ array-ify@^1.0.0:
   resolved "https://registry.yarnpkg.com/array-ify/-/array-ify-1.0.0.tgz#9e528762b4a9066ad163a6962a364418e9626ece"
   integrity sha1-nlKHYrSpBmrRY6aWKjZEGOlibs4=
 
+array-last@~0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/array-last/-/array-last-0.1.0.tgz#da044b5e1524f8a08f99e40553a560a050537e5f"
+  integrity sha1-2gRLXhUk+KCPmeQFU6VgoFBTfl8=
+
 array-union@^1.0.1, array-union@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/array-union/-/array-union-1.0.2.tgz#9a34410e4f4e3da23dea375be5be70f24778ec39"
@@ -5092,7 +5097,7 @@ escape-html@^1.0.3:
   resolved "https://registry.yarnpkg.com/escape-html/-/escape-html-1.0.3.tgz#0258eae4d3d0c0974de1c169188ef0051d1d1988"
   integrity sha1-Aljq5NPQwJdN4cFpGI7wBR0dGYg=
 
-escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
+escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5, escape-string-regexp@~1.0.3:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
@@ -6278,6 +6283,14 @@ grunt-node-modules-cachebuster@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/grunt-node-modules-cachebuster/-/grunt-node-modules-cachebuster-0.1.0.tgz#60033b55f008bc674714743808e8b98799f2e1d7"
   integrity sha512-Y4rD8d1n1t6QD4tEB6p+hRlb788WqsMKLTfjVIJH8uXJW2ME/Q0UC26Scvf5OjVjS7G4cIMRUQXBdfFsfCR2KQ==
+
+grunt-strip-code@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/grunt-strip-code/-/grunt-strip-code-1.0.6.tgz#d4ece56d87f652153ad50d16f85c80e2436d2f85"
+  integrity sha1-1OzlbYf2UhU61Q0W+FyA4kNtL4U=
+  dependencies:
+    array-last "~0.1.0"
+    escape-string-regexp "~1.0.3"
 
 grunt@^1.0.4:
   version "1.0.4"

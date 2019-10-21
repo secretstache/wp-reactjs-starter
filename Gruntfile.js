@@ -3,47 +3,67 @@
 module.exports = function(grunt) {
     // Project configuration
     grunt.initConfig({
-        pkg: grunt.file.readJSON("package.json"),
-        SERVE_DIR: "dist/<%= pkg.name %>", // The serve folder
-        SERVE_POST_TASKS: ["serveReadmeTxt", "compress:serve"], // This grunt tasks runs after the serve is complete
+        SERVE_POST_TASKS: ["serveReadmeTxt", "clean:productionSource", "compress:installablePlugin"], // This grunt tasks runs after the serve is complete (some are defined in build/grunt.js)
         clean: {
             /**
-             * Task to clean the already copied node modules to the public library folder
+             * Task to clean the already copied node modules to the public library folder.
+             * This is needed for the copy-npmLibs task.
              */
-            npmLibs: ["public/lib/react/", "public/lib/react-dom/", "public/lib/mobx/", "public/lib/mobx-state-tree/"] // Your library folders, do not use 'public/lib' as source directly
+            npmLibs: {
+                expand: true,
+                cwd: "public/lib/",
+                src: ["react", "react-dom", "mobx", "mobx-state-tree"]
+            },
+            /**
+             * Task to clean sourcemap ".map" and non-minified files from libraries which are not needed
+             * on production build. This is useful for example to reduce the size of the plugin
+             * itself because some hosting providers only allow an upload size of 2 MB if it
+             * is sold outside of wordpress.org. See also strip_code:sourcemaps.
+             */
+            productionLibs: {
+                expand: true,
+                cwd: "<%= SERVE_DIR %>/public/lib",
+                src: [
+                    "mobx/lib/mobx.umd.js",
+                    "mobx-state-tree/dist/mobx-state-tree.umd.js",
+                    "react/umd/react.development.js",
+                    "react-dom/umd/react-dom.development.js"
+                ]
+            }
+        },
+        strip_code: {
+            /**
+             * With clean:productionLibs all sourcemap files are cleaned. To avoid 404 errors
+             * on client side you also need to remove the link to the sourcemap.
+             */
+            sourcemaps: {
+                options: {
+                    patterns: /^\/{2}#\s*sourceMappingURL=.*\.map\s*$/gim
+                },
+                expand: true,
+                src: ["<%= SERVE_DIR %>/public/lib/mobx/lib/mobx.umd.min.js"]
+            }
         },
         copy: {
             /**
-             * Task to copy npm modules to the public library folder.
+             * Task to copy npm modules to the public library folder. This are mostly libraries you
+             * enqueue in your Assets.class.php file and is added as "external" in your webpack config.
              */
             npmLibs: {
                 expand: true,
                 cwd: "node_modules",
                 src: [
-                    "react/umd/*.js",
-                    "react/LICENSE*",
-                    "react-dom/umd/react-dom.development.js",
-                    "react-dom/umd/react-dom.production.min.js",
-                    "react-dom/LICENSE*",
-                    "mobx/LICENSE*",
+                    "react/umd/react.?(development|production.min).js",
+                    "react-dom/umd/react-dom.?(development|production.min).js",
                     "mobx/lib/mobx.umd*.js",
-                    "mobx/lib/mobx.umd*.map",
-                    "mobx-state-tree/dist/mobx-state-tree.umd*.js"
-                ], // Your library files
+                    "mobx-state-tree/dist/mobx-state-tree.umd*.js",
+                    "?(react|react-dom|mobx)/LICENSE*"
+                ],
                 dest: "public/lib/"
             }
         }
     });
 
-    // Load WP ReactJS Starter tasks (DO NOTE REMOVE this and initConfig should be called until here already)
+    // Load WP ReactJS Starter initial tasks
     require("./build/grunt.js")(grunt);
-
-    // Load npm tasks
-    grunt.loadNpmTasks("grunt-contrib-copy");
-    grunt.loadNpmTasks("grunt-contrib-clean");
-
-    // Register default task
-    grunt.registerTask("default", function() {
-        grunt.log.write("Your default task...");
-    });
 };
