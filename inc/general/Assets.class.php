@@ -18,10 +18,7 @@ class Assets extends base\Assets {
      * @param string $type The type (see base\Assets constants)
      */
     public function enqueue_scripts_and_styles($type) {
-        $publicFolder = $this->getPublicFolder();
         $isDebug = $this->isScriptDebug();
-        $dpSuffix = $isDebug ? 'development' : 'production.min';
-        $minSuffix = $isDebug ? '' : '.min';
 
         // React (first check version is minium 16.8 so hooks work correctly)
         $coreReact = wp_scripts()->query('react');
