@@ -31,14 +31,28 @@ class Assets extends base\Assets {
         }
 
         // Both in admin interface (page) and frontend (widgets)
-        $this->enqueueLibraryScript('react', 'react/umd/react.' . $dpSuffix . '.js');
-        $this->enqueueLibraryScript('react-dom', 'react-dom/umd/react-dom.' . $dpSuffix . '.js', 'react');
+        $this->enqueueLibraryScript('react', [
+            [$isDebug, 'react/umd/react.development.js'],
+            'react/umd/react.production.min.js'
+        ]);
+        $this->enqueueLibraryScript(
+            'react-dom',
+            [[$isDebug, 'react-dom/umd/react-dom.development.js'], 'react-dom/umd/react-dom.production.min.js'],
+            'react'
+        );
 
         // mobx
-        $this->enqueueLibraryScript('mobx', 'mobx/lib/mobx.umd' . $minSuffix . '.js');
+        $this->enqueueLibraryScript('mobx', [[$isDebug, 'mobx/lib/mobx.umd.js'], 'mobx/lib/mobx.umd.min.js']);
 
         // mobx-state-tree
-        $this->enqueueLibraryScript('mobx-state-tree', 'mobx-state-tree/dist/mobx-state-tree.umd.js', ['mobx']);
+        $this->enqueueLibraryScript(
+            'mobx-state-tree',
+            [
+                [$isDebug, 'mobx-state-tree/dist/mobx-state-tree.umd.js'],
+                'mobx-state-tree/dist/mobx-state-tree.umd.min.js'
+            ],
+            ['mobx']
+        );
 
         // Your assets implementation here... See base\Assets for enqueue* methods
         $scriptDeps = ['react-dom', 'lodash', 'moment', 'wp-i18n'];

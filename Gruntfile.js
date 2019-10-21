@@ -28,7 +28,7 @@ module.exports = function(grunt) {
                     "mobx/LICENSE*",
                     "mobx/lib/mobx.umd*.js",
                     "mobx/lib/mobx.umd*.map",
-                    "mobx-state-tree/dist/mobx-state-tree.umd.js"
+                    "mobx-state-tree/dist/mobx-state-tree.umd*.js"
                 ], // Your library files
                 dest: "public/lib/"
             }

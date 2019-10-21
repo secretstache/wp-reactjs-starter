@@ -41,22 +41,44 @@ abstract class Assets extends Base {
      * method instead of wp_enqueue_script if you want to use the cachebuster for the given src. If the
      * src is not found in the cachebuster (inc/others/cachebuster.php) it falls back to WPRJSS_VERSION.
      *
+     * You can also use something like this to determine SCRIPT_DEBUG files:
+     *
+     * ```php
+     *
+     * ```
+     *
      * @param string $handle Name of the script. Should be unique.
-     * @param string $src The src relative to public/dist or public/dev folder (when $isLib is false)
+     * @param string|string[] $src The src relative to public/dist or public/dev folder (when $isLib is false)
      * @param array $deps An array of registered script handles this script depends on.
      * @param boolean $in_footer Whether to enqueue the script before </body> instead of in the <head>.
      * @param boolean $isLib If true the public/lib/ folder is used.
      * @see https://developer.wordpress.org/reference/functions/wp_enqueue_script/ For parameters
      */
     public function enqueueScript($handle, $src = '', $deps = [], $in_footer = false, $isLib = false) {
-        $src = $this->getPublicFolder($isLib) . $src;
-        wp_enqueue_script(
-            $handle,
-            plugins_url($src, WPRJSS_FILE),
-            $deps,
-            $this->getCachebusterVersion($src, $isLib),
-            true
-        );
+        if (!is_array($src)) {
+            $src = array($src);
+        }
+
+        $publicFolder = $this->getPublicFolder($isLib);
+        foreach ($src as $s) {
+            // Allow to skip e. g. SCRIPT_DEBUG files
+            if (is_array($s) && $s[0] !== true) {
+                continue;
+            }
+
+            $publicSrc = $publicFolder . (is_array($s) ? $s[1] : $s);
+            $path = path_join(WPRJSS_PATH, $publicSrc);
+            if (file_exists($path)) {
+                wp_enqueue_script(
+                    $handle,
+                    plugins_url($publicSrc, WPRJSS_FILE),
+                    $deps,
+                    $this->getCachebusterVersion($publicSrc, $isLib),
+                    true
+                );
+                break;
+            }
+        }
     }
 
     /**
@@ -74,21 +96,32 @@ abstract class Assets extends Base {
      * it falls back to WPRJSS_VERSION.
      *
      * @param string $handle Name of the style. Should be unique.
-     * @param string $src The src relative to public/dist or public/dev folder (when $isLib is false)
+     * @param string|string[] $src The src relative to public/dist or public/dev folder (when $isLib is false)
      * @param array $deps An array of registered style handles this style depends on.
      * @param string $media The media for which this stylesheet has been defined. Accepts media types like 'all', 'print' and 'screen', or media queries like '(orientation: portrait)' and '(max-width: 640px)'.
      * @param boolean $isLib If true the public/lib/ folder is used.
      * @see https://developer.wordpress.org/reference/functions/wp_enqueue_style/ For parameters
      */
     public function enqueueStyle($handle, $src = '', $deps = [], $media = 'all', $isLib = false) {
-        $src = $this->getPublicFolder($isLib) . $src;
-        wp_enqueue_style(
-            $handle,
-            plugins_url($src, WPRJSS_FILE),
-            $deps,
-            $this->getCachebusterVersion($src, $isLib),
-            $media
-        );
+        if (!is_array($src)) {
+            $src = array($src);
+        }
+
+        $publicFolder = $this->getPublicFolder($isLib);
+        foreach ($src as $s) {
+            $publicSrc = $publicFolder . $s;
+            $path = path_join(WPRJSS_PATH, $publicSrc);
+            if (file_exists($path)) {
+                wp_enqueue_style(
+                    $handle,
+                    plugins_url($publicSrc, WPRJSS_FILE),
+                    $deps,
+                    $this->getCachebusterVersion($publicSrc, $isLib),
+                    $media
+                );
+                break;
+            }
+        }
     }
 
     /**
