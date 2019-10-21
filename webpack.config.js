@@ -23,10 +23,9 @@ module.exports = {
         jquery: "jQuery",
         mobx: "mobx",
         "mobx-state-tree": "mobxStateTree",
-        moment: "moment",
-        "moment-timezone": "moment",
         wp: "wp",
         _: "_",
+        lodash: "lodash",
         wpApiSettings: "wpApiSettings",
         "@wordpress/i18n": "wp['i18n']"
     },
@@ -40,21 +39,7 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    "css-loader",
-                    {
-                        loader: "postcss-loader",
-                        options: {
-                            config: {
-                                ctx: {
-                                    clean: {}
-                                }
-                            }
-                        }
-                    },
-                    "sass-loader"
-                ]
+                use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader", "sass-loader"]
             }
         ]
     },
@@ -79,9 +64,9 @@ module.exports = {
             WebPackRecreateCachebuster.prototype.apply = function(compiler) {
                 compiler.plugin("done", function(compilation, callback) {
                     setTimeout(function() {
-                        console.log("Running webpack-build-done script...");
+                        console.log("Running build:webpack:done script...");
                     }, 0);
-                    exec("npm run webpack-build-done").stdout.pipe(process.stdout);
+                    exec("yarn build:webpack:done").stdout.pipe(process.stdout);
                 });
             };
             return WebPackRecreateCachebuster;

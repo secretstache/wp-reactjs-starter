@@ -3,18 +3,18 @@
 module.exports = function(grunt) {
     // Project configuration
     grunt.initConfig({
-        pkg: grunt.file.readJSON("package.json"), // DO NOT REMOVE
+        pkg: grunt.file.readJSON("package.json"),
         SERVE_DIR: "dist/<%= pkg.name %>", // The serve folder
         SERVE_POST_TASKS: ["serveReadmeTxt", "compress:serve"], // This grunt tasks runs after the serve is complete
         clean: {
             /**
-             * DO NOT REMOVE. Task to clean the already copied node modules to the public library folder
+             * Task to clean the already copied node modules to the public library folder
              */
             npmLibs: ["public/lib/react/", "public/lib/react-dom/", "public/lib/mobx/", "public/lib/mobx-state-tree/"] // Your library folders, do not use 'public/lib' as source directly
         },
         copy: {
             /**
-             * DO NOT REMOVE. Task to copy npm modules to the public library folder.
+             * Task to copy npm modules to the public library folder.
              */
             npmLibs: {
                 expand: true,

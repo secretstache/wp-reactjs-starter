@@ -54,7 +54,8 @@ variables:
 ### Stage: validate
 #########################
 
-install: # Install all dependencies with previous caches
+# Install all dependencies with previous caches
+install:
     <<: *installsteps
     script: echo .
     stage: validate
@@ -63,7 +64,8 @@ install: # Install all dependencies with previous caches
             - yarn.lockg
             - composer.lock
 
-reinstall: # The reinstall step should install all dependencies from scratch when a lock file got changed
+# The reinstall step should install all dependencies from scratch when a lock file got changed
+reinstall:
     <<: *installsteps
     script: echo .
     variables:
@@ -74,7 +76,8 @@ reinstall: # The reinstall step should install all dependencies from scratch whe
             - yarn.lock
             - composer.lock
 
-docker e2e purge: # When docker relevant files got changed remove all docker containers automatically
+# When docker relevant files got changed remove all docker containers automatically
+docker e2e purge:
     stage: validate
     variables:
         COMPOSE_PROJECT_NAME_SUB: -ci
@@ -90,7 +93,8 @@ docker e2e purge: # When docker relevant files got changed remove all docker con
 ### Stage: build
 #########################
 
-docs: # Generate technical documents
+# Generate technical documents
+docs:
     <<: *installsteps
     stage: build
     script:
@@ -100,12 +104,14 @@ docs: # Generate technical documents
         paths:
             - docs/
 
-lint: # Lint the project (TS)
+# Lint the project (TS)
+lint:
     <<: *installsteps
     stage: build
     script: yarn lint
 
-serve and docker e2e: # Create dist files of the plugin and run it through docker
+# Create dist files of the plugin and run it through docker
+serve and docker e2e:
     <<: *installsteps
     stage: build
     variables:
@@ -114,7 +120,7 @@ serve and docker e2e: # Create dist files of the plugin and run it through docke
         - docker:dind
     script:
         # Adjust the semantic-release so it is also available in the new .zip file
-        - (PREPARE_ONLY=1 BRANCH=$CI_COMMIT_REF_NAME yarn semantic-release || true) && echo 1
+        - PREPARE_ONLY=1 BRANCH=$CI_COMMIT_REF_NAME yarn semantic-release || true # do not throw error because it skips "publish" task
         # Build the plugin
         - yarn serve
         # Make scripts executable
@@ -133,6 +139,7 @@ serve and docker e2e: # Create dist files of the plugin and run it through docke
 ### Stage: test
 #########################
 
+# Start the cypress e2e tests
 docker e2e cypress:
     <<: *installsteps
     dependencies:
@@ -164,6 +171,7 @@ docker e2e cypress:
 ### Stage: deploy
 #########################
 
+# Use the GitLab "Review apps" feature so the commits can be viewed directly in the browser
 docker review start:
     stage: deploy
     dependencies:
@@ -194,6 +202,7 @@ docker review start:
         url: http://${CI_COMMIT_REF_SLUG}-${PLUGIN_SLUG}-${CI_TRAEFIK_HOST}
         on_stop: docker review stop
 
+# Listen to review stop so the docker container can be removed
 docker review stop:
     stage: deploy
     variables:
@@ -214,7 +223,8 @@ docker review stop:
         name: review/$CI_COMMIT_REF_NAME
         action: stop
 
-wordpress-dot-org:
+# Publish the plugin to wordpress.org/plugins
+wordpress.org:
     stage: deploy
     dependencies:
         - serve and docker e2e
@@ -236,6 +246,7 @@ wordpress-dot-org:
         variables:
             - $WPORG_SVN_URL && $WPORG_SVN_USERNAME && $WPORG_SVN_PASSWORD
 
+# Semantic release with automatic versioning depending on the commit messages
 release:
     <<: *installsteps
     stage: deploy

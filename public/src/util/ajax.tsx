@@ -1,5 +1,5 @@
 import { pluginOptions, trailingslashit } from ".";
-import uri from "lil-uri";
+import Url from "url-parse";
 import $ from "jquery";
 
 // Use _method instead of Http verb
@@ -30,10 +30,9 @@ function urlBuilder({
     params?: IRouteParamsInterface;
     nonce?: boolean;
 }) {
-    const apiUrl = uri(pluginOptions.restRoot),
-        windowProtocol = uri(window.location.href).protocol(),
-        query = apiUrl.query() || {},
-        permalinkPath = (query.rest_route as string) || apiUrl.path(); // Determine path from permalink settings
+    const apiUrl = new Url(pluginOptions.restRoot, window.location.href, true), // uri(pluginOptions.restRoot),
+        query = apiUrl.query,
+        permalinkPath = (query.rest_route as string) || apiUrl.pathname; // Determine path from permalink settings
 
     // Generate dynamic path
     const foundParams: string[] = [],
@@ -51,15 +50,15 @@ function urlBuilder({
     const usePath = trailingslashit(permalinkPath) + trailingslashit(location.namespace || "wprjss/v1") + path;
 
     // Set https if site url is SSL
-    if (windowProtocol === "https") {
-        apiUrl.protocol("https");
+    if (new Url(window.location.href).protocol === "https:") {
+        apiUrl.set("protocol", "https");
     }
 
     // Set path depending on permalink settings
     if (query.rest_route) {
         query.rest_route = usePath;
     } else {
-        apiUrl.path(usePath); // Set path
+        apiUrl.set("pathname", usePath); // Set path
     }
 
     // Append others
@@ -70,7 +69,7 @@ function urlBuilder({
         query._method = location.method;
     }
 
-    return apiUrl.query($.extend(true, {}, pluginOptions.restQuery, getParams, query));
+    return apiUrl.set("query", $.extend(true, {}, pluginOptions.restQuery, getParams, query));
 }
 
 async function ajax<
@@ -97,7 +96,7 @@ async function ajax<
 
     const result = await $.ajax(
         $.extend(true, settings, {
-            url: builtUrl.build(),
+            url: builtUrl.toString(),
             headers: {
                 "X-WP-Nonce": pluginOptions.restNonce
             },
@@ -114,5 +113,6 @@ export {
     IRouteParamsInterface,
     IRouteResponseInterface,
     urlBuilder,
-    ajax
+    ajax,
+    Url
 };

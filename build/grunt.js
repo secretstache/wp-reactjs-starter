@@ -126,9 +126,8 @@ module.exports = function(grunt) {
     });
 
     /**
-     * Serve README.txt generator
-     *
-     * @legacy
+     * Generate the README.txt from README.wporg.txt and allow includes through
+     * the [include:$FILE] syntax so wordpress.org can consume it.
      */
     grunt.registerTask("serveReadmeTxt", function() {
         let publicTxt = grunt.file.read(SERVE_DIR + "/README.wporg.txt");
@@ -140,7 +139,8 @@ module.exports = function(grunt) {
     });
 
     /**
-     * Serve rename readme task
+     * Rename README.md to README.txt so it can be consumed by wordpress.org. This task
+     * is replaced by serveReadmeTxt and is only here for legacy purposes (legacy branch).
      *
      * @legacy
      */

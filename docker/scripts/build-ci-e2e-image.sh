@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Builds the docker file ../container/ci-e2e/Dockerfile with the correct version.
+
 if [ -z "$VERSION" ]; then
     VERSION=$(node -e "console.log(require('./package.json').version)")
 fi

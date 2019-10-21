@@ -3,6 +3,9 @@
         "esbenp.prettier-vscode",
         "eg2.tslint",
         "felixfbecker.php-intellisense",
-        "mrorz.language-gettext"
+        "mrorz.language-gettext",
+        "steoates.autoimport",
+        "ms-azuretools.vscode-docker",
+        "stringham.move-ts"
     ]
 }

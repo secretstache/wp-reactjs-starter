@@ -1,5 +1,4 @@
 {
-    "prettier.tslintIntegration": true,
     "editor.useTabStops": false,
     "editor.formatOnSave": false,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -18,7 +17,5 @@
     },
     "[php]": {
         "editor.formatOnSave": true
-    },
-    "cSpell.enabled": false,
-    "cSpell.ignoreWords": ["traefik"]
+    }
 }

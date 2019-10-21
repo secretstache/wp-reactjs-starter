@@ -13,3 +13,9 @@ const node = document.getElementById(pluginOptions.slug + "-component");
 if (node) {
     ReactDOM.render(<ComponentLibrary />, node);
 }
+
+// Expose this functionalities to add-ons, but you need to activate the library functionality
+// in your webpack configuration, see also https://webpack.js.org/guides/author-libraries/
+export * from "./util";
+export * from "./rest";
+export * from "./store";

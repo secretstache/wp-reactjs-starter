@@ -7,7 +7,7 @@ check_interval = 0
 [[runners]]
   name = "Scaleway Custom Gitlab Runner"
   url = "https://gitlab.com"
-  token = "j1tStLFp1HdtdMHtYfTy"
+  token = "<your-token>"
   executor = "docker"
   cache_dir = "/tmp/gitlab-cache"
   [runners.custom_build_dir]

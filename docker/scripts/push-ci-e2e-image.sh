@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Push the latest built E2E dockerfile ./container/ci-e2e/Dockerfile.
+
 if [ -z "$VERSION" ]; then
     VERSION=$(node -e "console.log(require('./package.json').version)")
 fi

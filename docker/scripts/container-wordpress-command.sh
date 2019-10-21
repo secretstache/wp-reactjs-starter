@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Run your commands for startup of WordPress in the docker environment.
+
 # Run original docker-entrypoint.sh because it is overwritten with "command"
 docker-entrypoint.sh apache2
 

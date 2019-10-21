@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Purge a given composition of docker containers with volumes and networks. Useful for review applications and E2E tests.
+
 # Remove running containers
 echo "[CONTAINERS]"
 docker ps -a

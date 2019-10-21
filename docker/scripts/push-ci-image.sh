@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Push the latest built CI dockerfile ./container/ci/Dockerfile.
+
 if [ -z "$VERSION" ]; then
     VERSION=$(node -e "console.log(require('./package.json').version)")
 fi

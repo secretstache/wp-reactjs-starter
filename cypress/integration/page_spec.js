@@ -1,7 +1,7 @@
 const pkg = require("../../package.json");
 
 beforeEach("Automatically login to WordPress dashboard as admin user", function() {
-    //cy.exec("yarn db-snapshot-import"); // You can also reset the database before each test
+    //cy.exec("yarn db:snapshot-import"); // You can also reset the database before each test
     cy.exec(`yarn --silent wp-cli "wp core version"`); // Just to check if WP is generelly available
     cy.visit("/wp-login.php?autologin=wordpress");
     cy.url().should("contain", "wp-admin");
