@@ -2,14 +2,14 @@
  * The entry point for the admin side wp-admin resource.
  */
 
-import React from "react";
-import ReactDOM from "react-dom";
-import { ComponentLibrary } from "./component-library";
+import Vue from "vue";
 import "setimmediate"; // Polyfill for yielding
 import { pluginOptions } from "./util";
+import App from "./components/admin/index.vue";
+import { store } from "./store/";
 
-const node = document.getElementById(pluginOptions.slug + "-component");
-
-if (node) {
-    ReactDOM.render(<ComponentLibrary />, node);
-}
+new Vue({
+    store,
+    //el: pluginOptions.slug + "-component",
+    render: (h) => h(App)
+}).$mount(pluginOptions.slug + "-component");
