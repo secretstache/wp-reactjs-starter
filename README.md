@@ -1,5 +1,5 @@
-<h1><p align="center">WordPress ReactJS Boilerplate :sparkling_heart:</p></h1>
-<p align="center">This WordPress plugin demonstrates how to setup a plugin that uses React and ES6 in a WordPress plugin (Frontend Widget, WordPress backend menu page) - within a fully customizable Docker development environment.</p>
+<h1><p align="center">WordPress VueJS Boilerplate :sparkling_heart:</p></h1>
+<p align="center">This WordPress plugin demonstrates how to setup a plugin that uses VueJS and ES6 in a WordPress plugin (Frontend Widget, WordPress backend menu page) - within a fully customizable Docker development environment.</p>
 
 ---
 
@@ -9,10 +9,10 @@
 [![license](https://img.shields.io/github/license/matzeeable/wp-reactjs-starter.svg?colorB=green)](https://github.com/matzeeable/wp-reactjs-starter/blob/master/LICENSE)
 [![Slack channel](https://img.shields.io/badge/Slack-join-green.svg)](https://matthias-web.com/slack)
 
-**Client-side features:** _Familiar React API & patterns (ES6) with TypeScript_
+**Client-side features:** _Familiar VueJS API & patterns (ES6) with TypeScript_
 
--   [**ReactJS**](https://reactjs.org/) v16 with **Babel v7** `env` preset + hooks
--   [**mobx-state-tree**](https://github.com/mobxjs/mobx-state-tree) for Model Driven State Management
+-   [**VueJS**](https://vuejs.org/) v16 with **Babel v7** `env` preset + hooks
+-   [**VUEX**](https://github.com/vuejs/vuex) Centralized State Management for Vue.js.
 -   [**webpack**](https://webpack.js.org/) v4 build for assets
 -   CSS and TypeScript [**Sourcemap**](https://www.html5rocks.com/en/tutorials/developertools/sourcemaps/) generation for debugging purposes
 -   [**SASS**](http://sass-lang.com/) stylesheets compiler (`.scss` files)
@@ -273,17 +273,17 @@ copy: {
 4. Go to `Assets.class.php` and enqueue the styles and scripts:
 
 ```php
-// This must be before your ReactJS styles and scripts so it can be used in ReactJS
+// This must be before your VueJS styles and scripts so it can be used in VueJS
 $this->enqueueLibraryScript('jquery-tooltipster', 'jquery-tooltipster/js/tooltipster.js');
 $this->enqueueLibraryStyle('jquery-tooltipster', 'jquery-tooltipster/css/tooltipster.css');
 
-// Add the dependencies to the ReactJS styles and scripts
-$this->enqueueScript('wp-reactjs-starter', 'admin.js', array('react-dom', 'jquery-tooltipster'));
-$this->enqueueStyle('wp-reactjs-starter', 'admin.css', array('jquery-tooltipster');
+// Add the dependencies to the VueJS styles and scripts
+$this->enqueueScript('wp-vuejs-starter', 'admin.js', array('vue', 'jquery-tooltipster'));
+$this->enqueueStyle('wp-vuejs-starter', 'admin.css', array('jquery-tooltipster');
 ```
 
 5. If you have a look at your browser network log you see that the plugin automatically appends the right module version to the resource URL.
-6. If you want to use the library in your ReactJS coding simply add jQuery to the `webpack.config.js` file as external:
+6. If you want to use the library in your VueJS coding simply add jQuery to the `webpack.config.js` file as external:
 
 ```js
 externals: {
@@ -291,7 +291,7 @@ externals: {
 },
 ```
 
-7. And this in your ReactJS file:
+7. And this in your VueJS file:
 
 ```js
 import $ from "jquery";
@@ -317,44 +317,6 @@ The boilerplate needs a minimum WordPress version of **4.4**. The **WP REST API 
 
 **Note:** Using the WP REST API v2 is essential for high quality plugins, please avoid using `admin-ajax.php`.
 
-## JavaScript state management
-
-The starter plugin uses the following packages to provide a easy-to use **Model Driven State Management**:
-
--   [**mobx@4**](https://github.com/mobxjs/mobx): This dependency is needed for mobx-state-tree to work. It uses Version 4 because v5 is for browsers with Proxies supported. Not all browsers (e. g. IE) does not support this kind of functionality.
--   [**mobx-state-tree**](https://github.com/mobxjs/mobx-state-tree): The model driven state management built on top of mobx.
--   [**mobx-react**](https://github.com/mobxjs/mobx-react): Easily create bindings for your React components for your models
-
-## Localization
-
-The boilerplate comes with an automatically created `languages/gyour-plugin-name.pot` file. If you are familar with the [`__()`](https://developer.wordpress.org/reference/functions/__/) translation functions you can use the constant `YOURCONSTANTPREFIX_TD` (see [Available constants](#available-constants)) as the `$domain` parameter. Languages are completely splitted between backend (PHP) and your frontend (JS).
-
-To translate the plugin you can use for example a tool like [Poedit](https://poedit.net/). Just create a new translation with `your-slug-de_DE.po` and get started with translation. The `pot` file is automatically generated for both backend and frontend on save action while running `yarn start-development`. Also you can create language overrides so you can avoid duplicate language files, e. g. `de_AT` should be handled as `de_DE` (see `Localization.class.php`).
-
-For frontend localization [`i18n-calypso`](https://github.com/Automattic/wp-calypso/tree/master/packages/i18n-calypso) is used for interpolate React components into your translation strings. Complex example from `public/src/component-library/index.tsx`:
-
-```tsx
-import { __, _i } from "../util/i18n";
-
-const NoticeExample = (
-    <Notice type={ENoticeType.Info}>
-        {_i(
-            __("The WP REST API URL of the plugin is: {{a}}%(restUrl)s{{/a}} (localized variable)", {
-                restUrl: pluginOptions.restUrl
-            }),
-            {
-                a: (
-                    <a href="#" onClick={doTestAjaxCall}>
-                        {pluginOptions.restUrl}
-                    </a>
-                )
-            }
-        )}
-    </Notice>
-);
-```
-
-**Awesome! Do no longer work with i18n keys in your frontend!**.
 
 ## Building production plugin
 
